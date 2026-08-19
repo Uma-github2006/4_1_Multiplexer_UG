@@ -126,47 +126,44 @@ _______ Here Paste the Simulated output ___________
 
 4:1 MUX Behavioral Implementation
 ```
-module mux4_to_1_behavioral (
-    input wire A,
-    input wire B,
-    input wire C,
-    input wire D,
-    input wire S0,
-    input wire S1,
+module mux_4x1 (
+    input  wire I0, I1, I2, I3,
+    input  wire S0, S1,
     output reg Y
 );
-    always @(*) begin
-        
-    end
+
+always @(*) begin
+    case ({S1, S0})
+        2'b00: Y = I0;
+        2'b01: Y = I1;
+        2'b10: Y = I2;
+        2'b11: Y = I3;
+        default: Y = 1'b0;
+    endcase
+end
+
 endmodule
 ```
 #4:1 MUX Behavioral Modelling- Testbench
 ```
 // Testbench Skeleton
 `timescale 1ns/1ps
-module tb_mux4_behavioral;
+module tb_mux4_to_1_behavioral;
+reg A, B, C, D;
+reg S0, S1;
+wire Y;
 
-    // Declare testbench signals
-    reg I0, I1, I2, I3;
-    reg S0, S1;
-    wire Y;
-
-    // Instantiate DUT
-    mux4_behavioral uut (
-        .I0(I0), .I1(I1), .I2(I2), .I3(I3),
-        .S0(S0), .S1(S1),
-        .Y(Y)
-    );
-
-    initial begin
-        // Initialize inputs
-
-        // Apply test cases
-
-        // Stop simulation
-        #10 $stop;
-    end
-
+mux4_to_1_behavioral uut (A,B,C,D,S0,S1,Y);
+initial 
+begin
+    A = 0; B = 0; C = 0; D = 0;
+    S0 = 0; S1 = 0;
+    #10 A = 1; B = 0; C = 0; D = 0; S1 = 0; S0 = 0;
+    #10 A = 0; B = 1; C = 0; D = 0; S1 = 0; S0 = 1;
+    #10 A = 0; B = 0; C = 1; D = 0; S1 = 1; S0 = 0;
+    #10 A = 0; B = 0; C = 0; D = 1; S1 = 1; S0 = 1;
+    #10 $stop;
+end
 endmodule
 ```
 # Simulated Output Behavioral Modelling
@@ -192,26 +189,33 @@ module mux4_to_1_structural (
     input wire S1,
     output wire Y
 );
+    wire w1, w2;
+    mux2_to_1 M1 (.A(A), .B(B), .S(S0), .Y(w1));
+    mux2_to_1 M2 (.A(C), .B(D), .S(S0), .Y(w2));
+    mux2_to_1 M3 (.A(w1), .B(w2), .S(S1), .Y(Y));
+
+endmodule
 ```
 # Testbench Implementation
 ```
 `timescale 1ns / 1ps
 
-module mux4_to_1_tb;
-    reg A, B, C, D, S0, S1;
-    wire Y_gate, Y_dataflow, Y_behavioral, Y_structural;
+module tb_mux4_to_1_structural;
+reg A, B, C, D;
+reg S0, S1;
+wire Y;
 
-    
-
-    initial begin
-        A = 0; B = 0; C = 0; D = 0; S0 = 0; S1 = 0;
-
-      
-        #10 $stop;
-    end
-
-   
-    end
+mux4_to_1_behavioral uut (A,B,C,D,S0,S1,Y);
+initial 
+begin
+    A = 0; B = 0; C = 0; D = 0;
+    S0 = 0; S1 = 0;
+    #10 A = 1; B = 0; C = 0; D = 0; S1 = 0; S0 = 0;
+    #10 A = 0; B = 1; C = 0; D = 0; S1 = 0; S0 = 1;
+    #10 A = 0; B = 0; C = 1; D = 0; S1 = 1; S0 = 0;
+    #10 A = 0; B = 0; C = 0; D = 1; S1 = 1; S0 = 1;
+    #10 $stop;
+end
 endmodule
 ```
 # Simulated Output Structural Modelling
