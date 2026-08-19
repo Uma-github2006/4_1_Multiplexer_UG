@@ -246,7 +246,7 @@ end
 endmodule
 ```
 # Simulated Output Structural Modelling
-
+<img width="1364" height="764" alt="image" src="https://github.com/user-attachments/assets/65781010-fead-4aff-96b0-da206cade24e" />
 
 
 # CONCLUSION
