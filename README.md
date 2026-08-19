@@ -37,58 +37,59 @@ module mux4_gate (
     input  wire S0, S1,
     output wire Y
 );
+
     // Declare internal wires
+    wire nS0, nS1;
+    wire w0, w1, w2, w3;
 
-    // Write NOT gates
+    // NOT gates
+    not (nS0, S0);
+    not (nS1, S1);
 
-    // Write AND gates
+    // AND gates
+    and (w0, I0, nS1, nS0);
+    and (w1, I1, nS1, S0);
+    and (w2, I2, S1, nS0);
+    and (w3, I3, S1, S0);
 
-    // Write OR gate
+    // OR gate
+    or (Y, w0, w1, w2, w3);
 
 endmodule
+
 ```
 4:1 MUX Gate-Level Implementation- Testbench
 ```
-// Testbench Skeleton
-`timescale 1ns/1ps
 module tb_mux4_gate;
+reg I0, I1, I2, I3;
+reg S0, S1;
+wire Y;
 
-    // Declare testbench signals
-    reg I0, I1, I2, I3;
-    reg S0, S1;
-    wire Y;
-
-    // Instantiate DUT
-    mux4_gate uut (
-        .I0(I0), .I1(I1), .I2(I2), .I3(I3),
-        .S0(S0), .S1(S1),
-        .Y(Y)
-    );
-
-    initial begin
-        // Initialize inputs
-
-        // Apply test cases
-
-        // Stop simulation
-        #10 $stop;
-    end
-
+mux4_gate uut (I0,I1,I2,I3,S0,S1,Y);
+initial
+begin
+    I0 = 0; I1 = 0; I2 = 0; I3 = 0;S0 = 0; S1 = 0;
+    #10 I0 = 1; I1 = 0; I2 = 0; I3 = 0; S1 = 0; S0 = 0;
+    #10 I0 = 0; I1 = 1; I2 = 0; I3 = 0; S1 = 0; S0 = 1;
+    #10 I0 = 0; I1 = 0; I2 = 1; I3 = 0; S1 = 1; S0 = 0;
+    #10 I0 = 0; I1 = 0; I2 = 0; I3 = 1; S1 = 1; S0 = 1;
+end
 endmodule
 ```
 # Simulated Output Gate Level Modelling
-______ Here Paste the Simulated output ___________
+<img width="1358" height="759" alt="image" src="https://github.com/user-attachments/assets/72e564fe-960a-4554-8792-90cff867432b" />
+
 
 4:1 MUX Data flow Modelling
+
 ```
-// Dataflow Modelling - Skeleton
+// Dataflow Modelling
 module mux4_dataflow (
     input  wire I0, I1, I2, I3,
     input  wire S0, S1,
     output wire Y
 );
-    // Write assign statement using operators
-
+    assign Y = (~S1 & ~S0 & I0) |(~S1 &  S0 & I1) | S1 & ~S0 & I2) | ( S1 &  S0 & I3);
 endmodule
 ```
 4:1 MUX Data flow Modelling- Testbench
